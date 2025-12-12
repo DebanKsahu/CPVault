@@ -29,14 +29,3 @@ data class ErrorDetail(
     val path: List<String>,
     val extensions: Extensions
 )
-
-@Serializable
-data class Location(
-    val line: Int,
-    val column: Int
-)
-
-@Serializable
-data class Extensions(
-    val handled: Boolean
-)

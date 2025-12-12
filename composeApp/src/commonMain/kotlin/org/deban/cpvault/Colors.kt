@@ -1,21 +1,12 @@
 package org.deban.cpvault
 
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 
 
 val LightBeige = Color(0xFFF5F5DC)
-val BgStart = Color(0xFF0F1115)
-val BgEnd = Color(0xFF1B2126)
-val CardBg = Color(0xFF23262A)
-val AccentRed = Color(0xFFFF6B3A)
-val AccentYellow = Color(0xFFF6C84C)
-val AccentGreen = Color(0xFF38D39F)
-val SoftTeal = Color(0xFF3DA08C)
 val MirageApprox40 = Color(41,41,63,150)
 val EbonyClayApprox45 = Color(28,28,46,150)
-val Black25 = Color(0x40000000)
 
 
 val homeBackgroundBrush = Brush.verticalGradient(
@@ -117,5 +108,40 @@ val leetcodeContestStatsBackgroundGradient = Brush.verticalGradient(
     colors = listOf(
         Color(26,188,156),
         Color(94,234,212)
+    )
+)
+
+val languageStatsBackgroundGradient = Brush.verticalGradient(
+    colors = listOf(
+        Color(137,194,217),
+        Color(1,79,134)
+    )
+)
+
+val rankOneLanguageStatGradient = Brush.verticalGradient(
+    colors = listOf(
+        Color(255,195,0),
+        Color(255,170,0)
+    )
+)
+
+val rankTwoLanguageStatGradient = Brush.verticalGradient(
+    colors = listOf(
+        Color(108,117,125),
+        Color(73,80,87)
+    )
+)
+
+val rankThreeLanguageStatGradient = Brush.verticalGradient(
+    colors = listOf(
+        Color(213,137,54),
+        Color(164,66,0)
+    )
+)
+
+val otherRankLanguageStatGradient = Brush.verticalGradient(
+    colors = listOf(
+        Color(164,195,178),
+        Color(107,144,128)
     )
 )

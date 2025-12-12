@@ -7,7 +7,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
@@ -65,17 +64,17 @@ class HomeScreenViewModel(
     suspend fun getLeetcodeProfileDetail(username: String) {
         getLeetcodeProfileUseCase.invoke(username = username)
             .onStart {
-                _leetcodeProfileUiState.update {
-                    HomeScreen.LeetcodeProfileUiState(isLoading = true)
+                _leetcodeProfileUiState.update {oldState ->
+                    oldState.copy(isLoading = true, data = null, error = "")
                 }
             }.onEach { result ->
                 result.onSuccess {
-                    _leetcodeProfileUiState.update {
-                        HomeScreen.LeetcodeProfileUiState(data = result.getOrNull())
+                    _leetcodeProfileUiState.update {oldState ->
+                        oldState.copy(isLoading = false, data = result.getOrNull(), error = "")
                     }
                 }.onFailure { error ->
-                    _leetcodeProfileUiState.update {
-                        HomeScreen.LeetcodeProfileUiState(error = error.message.toString())
+                    _leetcodeProfileUiState.update {oldState ->
+                        oldState.copy(isLoading = false, data = null, error = error.message.toString())
                     }
                 }
             }.collect()
@@ -84,19 +83,17 @@ class HomeScreenViewModel(
     suspend fun getLeetcodeContestHistory(username: String) {
         getLeetcodeContestHistoryUseCase.invoke(username = username)
             .onStart {
-                _leetcodeContestHistoryUiState.update {
-                    HomeScreen.LeetcodeContestHistoryUiState(isLoading = true)
+                _leetcodeContestHistoryUiState.update {oldState ->
+                    oldState.copy(isLoading = true, data = emptyList(), error = "")
                 }
             }.onEach { result ->
                 result.onSuccess {
-                    _leetcodeContestHistoryUiState.update {
-                        HomeScreen.LeetcodeContestHistoryUiState(
-                            data = result.getOrNull() ?: emptyList()
-                        )
+                    _leetcodeContestHistoryUiState.update {oldState ->
+                        oldState.copy(isLoading = false, data = result.getOrNull() ?: emptyList(), error = "")
                     }
                 }.onFailure { error ->
-                    _leetcodeContestHistoryUiState.update {
-                        HomeScreen.LeetcodeContestHistoryUiState(error = error.message.toString())
+                    _leetcodeContestHistoryUiState.update {oldState ->
+                        oldState.copy(isLoading = false, data = emptyList(), error = error.message.toString())
                     }
                 }
             }.collect()
@@ -105,21 +102,17 @@ class HomeScreenViewModel(
     suspend fun getLeetcodeContestDetail(username: String) {
         getLeetcodeContestDetailUseCase.invoke(username = username)
             .onStart {
-                _leetcodeContestDetailUiState.update {
-                    HomeScreen.LeetcodeContestDetailUiState(isLoading = true)
+                _leetcodeContestDetailUiState.update {oldState ->
+                    oldState.copy(isLoading = true, data = null, error = "")
                 }
             }.onEach { result ->
                 result.onSuccess {
-                    _leetcodeContestDetailUiState.update {
-                        HomeScreen.LeetcodeContestDetailUiState(
-                            data = result.getOrNull()
-                        )
+                    _leetcodeContestDetailUiState.update {oldState ->
+                        oldState.copy(isLoading = false, data = result.getOrNull(), error = "")
                     }
                 }.onFailure { error ->
-                    _leetcodeContestDetailUiState.update {
-                        HomeScreen.LeetcodeContestDetailUiState(
-                            error = error.message.toString()
-                        )
+                    _leetcodeContestDetailUiState.update {oldState ->
+                        oldState.copy(isLoading = false, data = null, error = error.message.toString())
                     }
                 }
             }.collect()
@@ -128,19 +121,18 @@ class HomeScreenViewModel(
     suspend fun getLeetcodeFullProfile(username: String) {
         getLeetcodeFullProfileUseCase.invoke(username = username)
             .onStart {
-                _leetcodeFullProfileUiState.update {
-                    HomeScreen.LeetcodeFullProfileUiState(isLoading = true)
+                _leetcodeFullProfileUiState.update {oldState ->
+                    oldState.copy(isLoading = true, data = null, error = "")
                 }
             }.onEach { result ->
                 if (result.isSuccess) {
-                    _leetcodeFullProfileUiState.update {
-                        HomeScreen.LeetcodeFullProfileUiState(data = result.getOrNull())
+                    _leetcodeFullProfileUiState.update {oldState ->
+                        oldState.copy(isLoading = false, data = result.getOrNull(), error = "")
                     }
                 } else {
-                    _leetcodeFullProfileUiState.update {
-                        HomeScreen.LeetcodeFullProfileUiState(
-                            error = result.exceptionOrNull()?.message?.toString() ?: "Unknown error"
-                        )
+                    _leetcodeFullProfileUiState.update {oldState ->
+                        oldState.copy(isLoading = false, data = null, error = result.exceptionOrNull()?.message
+                            ?: "Unknown error")
                     }
                 }
             }.collect()
@@ -149,19 +141,18 @@ class HomeScreenViewModel(
     suspend fun getLeetcodeLanguageStats(username: String) {
         getLeetcodeUserLanguageStatsUseCase.invoke(username = username)
             .onStart {
-                _leetcodeLanguageStatsUiState.update {
-                    HomeScreen.LeetcodeLanguageStatsUiState(isLoading = true)
+                _leetcodeLanguageStatsUiState.update {oldState ->
+                    oldState.copy(isLoading = true, data = null, error = "")
                 }
             }.onEach { result ->
                 if (result.isSuccess) {
-                    _leetcodeLanguageStatsUiState.update {
-                        HomeScreen.LeetcodeLanguageStatsUiState(data = result.getOrNull())
+                    _leetcodeLanguageStatsUiState.update {oldState ->
+                        oldState.copy(isLoading = false, data = result.getOrNull(), error = "")
                     }
                 } else {
-                    _leetcodeLanguageStatsUiState.update {
-                        HomeScreen.LeetcodeLanguageStatsUiState(
-                            error = result.exceptionOrNull()?.message?.toString() ?: "Error From HomeScreen ViewModel"
-                        )
+                    _leetcodeLanguageStatsUiState.update {oldState ->
+                        oldState.copy(isLoading = false, data = null, error = result.exceptionOrNull()?.message
+                            ?: "Error From HomeScreen ViewModel")
                     }
                 }
             }.collect()
