@@ -29,9 +29,9 @@ object LeetCodeClient {
         }
 
         install(HttpTimeout) {
-            socketTimeoutMillis = 5000
-            connectTimeoutMillis = 5000
-            requestTimeoutMillis = 5000
+            socketTimeoutMillis = 9000
+            connectTimeoutMillis = 9000
+            requestTimeoutMillis = 9000
         }
     }
 

@@ -13,7 +13,7 @@ CPVault is a Kotlin Multiplatform application designed to help competitive progr
 
 ## 📸 Screenshots
 
-*(Add screenshots or GIFs of the application here to showcase its features and UI.)*
+![CPVault App Mockup](readmeResources/images/app_mockup.jpeg)
 
 ## 🛠️ Technologies Used
 
@@ -89,8 +89,3 @@ Open the `/iosApp` directory in Xcode and run the project from there.
 ## 🤝 Contributing
 
 Contributions are welcome! If you'd like to contribute, please fork the repository and create a pull request. For major changes, please open an issue first to discuss what you would like to change.
-
-## 💬 Feedback
-
-We would appreciate your feedback on Compose/Web and Kotlin/Wasm in the public Slack channel [#compose-web](https://slack-chats.kotlinlang.org/c/compose-web).
-If you face any issues, please report them on [YouTrack](https://youtrack.jetbrains.com/newIssue?project=CMP).

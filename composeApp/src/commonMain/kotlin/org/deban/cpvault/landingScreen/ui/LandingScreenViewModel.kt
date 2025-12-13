@@ -48,20 +48,19 @@ class LandingScreenViewModel(
     suspend fun verifyLeetCodeUsername(username: String) {
         getLeetCodeUsernameUseCase.invoke(username = username)
             .onStart {
-                _uiState.update {
-                    LandingScreen.UiState(isLoading = true)
+                _uiState.update {oldState ->
+                    oldState.copy(isLoading = true)
                 }
             }.onEach { result ->
                 result.onSuccess {
-                    _uiState.update {
-                        LandingScreen.UiState(isUsernameAvailable = true)
+                    _uiState.update {oldState ->
+                        if (it.isNotBlank()) oldState.copy(isUsernameAvailable = true, isLoading = false, error = "")
+                        else oldState.copy(isUsernameAvailable = false, isLoading = false, error = "")
+
                     }
                 }.onFailure { error ->
-                    _uiState.update {
-                        LandingScreen.UiState(
-                            error = error.message.toString(),
-                            isUsernameAvailable = false
-                        )
+                    _uiState.update {oldState ->
+                        oldState.copy(error = error.message.toString(), isUsernameAvailable = null, isLoading = false)
                     }
                 }
             }.collect()

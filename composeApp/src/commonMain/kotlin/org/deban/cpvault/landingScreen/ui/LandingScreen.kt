@@ -114,8 +114,16 @@ fun LandingScreenContent(
                 placeholder = "Leetcode UserName",
                 onValueChange = onUsernameChange
             )
-
-            if (uiState.isUsernameAvailable ?: false) {
+            if (uiState.isLoading) {
+                Text(
+                    text = "Loading",
+                    style = TextStyle(
+                        color = Color.Gray,
+                        fontSize = 14.sp,
+                        textAlign = TextAlign.Center
+                    )
+                )
+            } else if (uiState.isUsernameAvailable!=null && uiState.isUsernameAvailable) {
                 Text(
                     text = "Found",
                     style = TextStyle(
@@ -124,9 +132,18 @@ fun LandingScreenContent(
                         textAlign = TextAlign.Center
                     )
                 )
-            } else if (!(uiState.isUsernameAvailable ?: true) and !uiState.isLoading) {
+            } else if (uiState.isUsernameAvailable!=null && !uiState.isUsernameAvailable) {
                 Text(
                     text = "Not Found",
+                    style = TextStyle(
+                        color = Color.Gray,
+                        fontSize = 14.sp,
+                        textAlign = TextAlign.Center
+                    )
+                )
+            } else if (!uiState.isLoading && uiState.error.isNotBlank()) {
+                Text(
+                    text = "Some Error Occured",
                     style = TextStyle(
                         color = Color.Gray,
                         fontSize = 14.sp,
