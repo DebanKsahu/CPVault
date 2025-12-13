@@ -5,13 +5,14 @@ import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
 fun getHomeScreenUiModule() = module {
-    viewModel {
+    viewModel {(username: String) ->
         HomeScreenViewModel(
             getLeetcodeProfileUseCase = get(),
             getLeetcodeContestHistoryUseCase = get(),
             getLeetcodeContestDetailUseCase = get(),
             getLeetcodeFullProfileUseCase = get(),
-            getLeetcodeUserLanguageStatsUseCase = get()
+            getLeetcodeUserLanguageStatsUseCase = get(),
+            username = username
         )
     }
 }

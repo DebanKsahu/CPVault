@@ -1,5 +1,6 @@
 package org.deban.cpvault.core.network.apiService
 
+import co.touchlab.kermit.Logger
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
@@ -24,7 +25,6 @@ class LeetCodeApiService(
         return try {
             val responseText = httpClient.get("/$username").bodyAsText()
             val jsonObj = this.json.parseToJsonElement(responseText).jsonObject
-
             if (jsonObj.containsKey("errors")) {
                 val errors = jsonObj["errors"]?.jsonArray?.joinToString { it.jsonObject["message"]!!.jsonPrimitive.content }
                 Result.failure(Exception("Api Error : $errors"))
@@ -74,6 +74,9 @@ class LeetCodeApiService(
             val responseText = httpClient.get("/languageStats") {
                 parameter("username",username)
             }.bodyAsText()
+            Logger.w("Debug ApiService") {
+                "The response is $responseText"
+            }
             val jsonObj = this.json.parseToJsonElement(responseText).jsonObject
             if (jsonObj.containsKey("errors")) {
                 Result.failure(Exception("Invalid Username"))

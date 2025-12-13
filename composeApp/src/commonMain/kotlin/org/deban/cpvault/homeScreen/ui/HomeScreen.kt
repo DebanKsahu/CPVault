@@ -41,12 +41,21 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import co.touchlab.kermit.Logger
 import coil3.compose.AsyncImage
 import cpvault.composeapp.generated.resources.BebasNeue_Regular
 import cpvault.composeapp.generated.resources.Boogaloo_Regular
 import cpvault.composeapp.generated.resources.Res
 import cpvault.composeapp.generated.resources.RoadRage_Regular
 import cpvault.composeapp.generated.resources.compose_multiplatform
+import org.deban.cpvault.core.network.model.leetcode.BadgeX
+import org.deban.cpvault.core.network.model.leetcode.Contest
+import org.deban.cpvault.core.network.model.leetcode.Data
+import org.deban.cpvault.core.network.model.leetcode.LeetCodeUserContestDetail
+import org.deban.cpvault.core.network.model.leetcode.LeetCodeUserFullProfile
+import org.deban.cpvault.core.network.model.leetcode.LeetCodeUserProfile
+import org.deban.cpvault.core.network.model.leetcode.UserContestRanking
+import org.deban.cpvault.core.network.model.leetcode.UserContestRankingHistory
 import org.deban.cpvault.easyLeetcodeQuestionBoxGradient
 import org.deban.cpvault.easyLeetcodeQuestionCircleGradient
 import org.deban.cpvault.easyLeetcodeQuestionTextGradient
@@ -72,12 +81,19 @@ import org.jetbrains.compose.resources.Font
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parametersOf
+import kotlin.math.roundToInt
 
 @Composable
 fun HomeScreen(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    username: String
 ) {
-    val viewModel = koinViewModel<HomeScreenViewModel>()
+    val viewModel = koinViewModel<HomeScreenViewModel>(
+        parameters = {
+            parametersOf(username)
+        }
+    )
     val leetcodeProfileUiState = viewModel.leetcodeProfileUiState.collectAsStateWithLifecycle()
     val leetcodeContestHistoryUiState = viewModel.leetcodeContestHistoryUiState.collectAsStateWithLifecycle()
     val leetcodeContestDetailUiState = viewModel.leetcodeContestDetailUiState.collectAsStateWithLifecycle()
@@ -123,7 +139,7 @@ fun HomeScreenContent(
                         fullName = leetcodeProfileUiState.data.name,
                         username = leetcodeProfileUiState.data.username,
                         userRank = leetcodeProfileUiState.data.ranking.toString(),
-                        contestRating = leetcodeContestDetailUiState.data.data?.userContestRanking?.rating?.toString() ?: "0"
+                        contestRating = leetcodeContestDetailUiState.data.data?.userContestRanking?.rating?.roundToInt().toString() ?: "0"
                     )
                 } else {
                     Text(text = leetcodeProfileUiState.error)
@@ -176,6 +192,19 @@ fun HomeScreenContent(
                     Text(text = leetcodeContestHistoryUiState.error)
                 }
 
+            }
+
+            item {
+                Spacer(modifier = Modifier.height(2.dp))
+                if (leetcodeLanguageStatsUiState.isLoading) {
+                    CircularProgressIndicator()
+                } else if (leetcodeLanguageStatsUiState.data !=null && leetcodeLanguageStatsUiState.error.isBlank()) {
+                    LanguagesStatsUi(
+                        languageStats = leetcodeLanguageStatsUiState.data,
+                    )
+                } else {
+                    Text(text = leetcodeLanguageStatsUiState.error)
+                }
             }
         }
     }
@@ -650,143 +679,135 @@ fun LanguageItem(
 }
 
 
-//@Preview
-//@Composable
-//fun HomeScreenPreview() {
-//    val previewLeetcodeUserProfile = LeetCodeUserProfile(
-//        about = "Hi, it'ss me Deban",
-//        avatar = "",
-//        birthday = "",
-//        company = "",
-//        country = "India",
-//        gitHub = "",
-//        linkedIN = "",
-//        name = "Deban Kumar Sahu",
-//        ranking = 42110,
-//        reputation = 25,
-//        school = "IIIT Bhubaneswar",
-//        skillTags = emptyList(),
-//        twitter = "",
-//        username = "debankumarsahu",
-//        website = emptyList(),
-//        errors = null,
-//    )
-//    val previewLeetcodeProfileUiState = HomeScreen.LeetcodeProfileUiState(data = previewLeetcodeUserProfile)
-//    val previewContestStatsList = listOf<ContestStats>(
-//        ContestStats(
-//            contestName = "Weekly Contest 470",
-//            problemSolved = 3,
-//            totalProblems = 4,
-//            rank = 2183,
-//            newRating = 1980,
-//            treadDirection = "UP",
-//            startTime = 1759631400
-//        ),
-//        ContestStats(
-//            contestName = "Weekly Contest 469",
-//            problemSolved = 2,
-//            totalProblems = 4,
-//            rank = 6769,
-//            newRating = 1976,
-//            treadDirection = "DOWN",
-//            startTime = 1759026600
-//        )
-//    )
-//    val previewLeetcodeContestHistoryUiState = HomeScreen.LeetcodeContestHistoryUiState(data = previewContestStatsList)
-//    val previewContestDetail = LeetCodeUserContestDetail(
-//        data = Data(
-//            userContestRanking = UserContestRanking(
-//                attendedContestsCount = 93,
-//                badge = BadgeX(name = "Knight"),
-//                globalRanking = 20398,
-//                rating = 1980.toDouble(),
-//                topPercentage = 2.76,
-//                totalParticipants = 771462
-//            ),
-//            userContestRankingHistory = listOf(
-//                UserContestRankingHistory(
-//                    attended = true,
-//                    contest = Contest(
-//                        startTime = 1759026600,
-//                        title = "Weekly Contest 469",
-//                    ),
-//                    finishTimeInSeconds = 60,
-//                    problemsSolved = 2,
-//                    ranking = 6769,
-//                    rating = 1976.toDouble(),
-//                    totalProblems = 4,
-//                    trendDirection = "DOWN"
-//                ),
-//                UserContestRankingHistory(
-//                    attended = true,
-//                    contest = Contest(
-//                        startTime = 1759631400,
-//                        title = "Weekly Contest 470",
-//                    ),
-//                    finishTimeInSeconds = 60,
-//                    problemsSolved = 3,
-//                    ranking = 2183,
-//                    rating = 1980.toDouble(),
-//                    totalProblems = 4,
-//                    trendDirection = "UP"
-//                )
-//            )
-//        )
-//    )
-//    val previewContestDetailUiState = HomeScreen.LeetcodeContestDetailUiState(data = previewContestDetail)
-//    val previewFullProfile = LeetCodeUserFullProfile(
-//        contributionPoint = 1475,
-//        easySolved = 253,
-//        hardSolved = 103,
-//        matchedUserStats = null,
-//        mediumSolved = 490,
-//        ranking = 42110,
-//        recentSubmissions = emptyList(),
-//        reputation = 25,
-//        submissionCalendar = null,
-//        totalEasy = 907,
-//        totalHard = 876,
-//        totalMedium = 1932,
-//        totalQuestions = 3715,
-//        totalSolved = 846,
-//        totalSubmissions = emptyList()
-//    )
-//    val previewLeetcodeFullProfileUiState = HomeScreen.LeetcodeFullProfileUiState(data = previewFullProfile)
-//    HomeScreenContent(
-//        leetcodeProfileUiState = previewLeetcodeProfileUiState,
-//        leetcodeContestHistoryUiState = previewLeetcodeContestHistoryUiState,
-//        leetcodeContestDetailUiState = previewContestDetailUiState,
-//        leetcodeFullProfileUiState = previewLeetcodeFullProfileUiState
-//    )
-//}
-
-
-
 @Preview
 @Composable
-fun TopLanguagesUiPreview() {
-    LanguagesStatsUi(
-        languageStats = listOf(
-            DomainLanguageStats(
-                name = "Kotlin",
-                solvedQuestion = 1000,
-                percentage = 0.67
-            ),
-            DomainLanguageStats(
-                name = "Python",
-                solvedQuestion = 500,
-                percentage = 0.54
-            ),
-            DomainLanguageStats(
-                name = "Go",
-                solvedQuestion = 400,
-                percentage = 0.24
-            ),
-            DomainLanguageStats(
-                name = "Java",
-                solvedQuestion = 300,
-                percentage = 0.17
-            ),
+fun HomeScreenPreview() {
+    val previewLeetcodeUserProfile = LeetCodeUserProfile(
+        about = "Hi, it'ss me Deban",
+        avatar = "",
+        birthday = "",
+        company = "",
+        country = "India",
+        gitHub = "",
+        linkedIN = "",
+        name = "Deban Kumar Sahu",
+        ranking = 42110,
+        reputation = 25,
+        school = "IIIT Bhubaneswar",
+        skillTags = emptyList(),
+        twitter = "",
+        username = "debankumarsahu",
+        website = emptyList(),
+        errors = null,
+    )
+    val previewLeetcodeProfileUiState = HomeScreen.LeetcodeProfileUiState(data = previewLeetcodeUserProfile)
+    val previewContestStatsList = listOf<ContestStats>(
+        ContestStats(
+            contestName = "Weekly Contest 470",
+            problemSolved = 3,
+            totalProblems = 4,
+            rank = 2183,
+            newRating = 1980,
+            treadDirection = "UP",
+            startTime = 1759631400
+        ),
+        ContestStats(
+            contestName = "Weekly Contest 469",
+            problemSolved = 2,
+            totalProblems = 4,
+            rank = 6769,
+            newRating = 1976,
+            treadDirection = "DOWN",
+            startTime = 1759026600
         )
+    )
+    val previewLeetcodeContestHistoryUiState = HomeScreen.LeetcodeContestHistoryUiState(data = previewContestStatsList)
+    val previewContestDetail = LeetCodeUserContestDetail(
+        data = Data(
+            userContestRanking = UserContestRanking(
+                attendedContestsCount = 93,
+                badge = BadgeX(name = "Knight"),
+                globalRanking = 20398,
+                rating = 1980.toDouble(),
+                topPercentage = 2.76,
+                totalParticipants = 771462
+            ),
+            userContestRankingHistory = listOf(
+                UserContestRankingHistory(
+                    attended = true,
+                    contest = Contest(
+                        startTime = 1759026600,
+                        title = "Weekly Contest 469",
+                    ),
+                    finishTimeInSeconds = 60,
+                    problemsSolved = 2,
+                    ranking = 6769,
+                    rating = 1976.toDouble(),
+                    totalProblems = 4,
+                    trendDirection = "DOWN"
+                ),
+                UserContestRankingHistory(
+                    attended = true,
+                    contest = Contest(
+                        startTime = 1759631400,
+                        title = "Weekly Contest 470",
+                    ),
+                    finishTimeInSeconds = 60,
+                    problemsSolved = 3,
+                    ranking = 2183,
+                    rating = 1980.toDouble(),
+                    totalProblems = 4,
+                    trendDirection = "UP"
+                )
+            )
+        )
+    )
+    val previewContestDetailUiState = HomeScreen.LeetcodeContestDetailUiState(data = previewContestDetail)
+    val previewFullProfile = LeetCodeUserFullProfile(
+        contributionPoint = 1475,
+        easySolved = 253,
+        hardSolved = 103,
+        matchedUserStats = null,
+        mediumSolved = 490,
+        ranking = 42110,
+        recentSubmissions = emptyList(),
+        reputation = 25,
+        totalEasy = 907,
+        totalHard = 876,
+        totalMedium = 1932,
+        totalQuestions = 3715,
+        totalSolved = 846,
+        totalSubmissions = emptyList()
+    )
+    val previewLeetcodeFullProfileUiState = HomeScreen.LeetcodeFullProfileUiState(data = previewFullProfile)
+    val previewLanguageStats = listOf(
+        DomainLanguageStats(
+            name = "Python",
+            solvedQuestion = 1287,
+            percentage = 0.67
+        ),
+        DomainLanguageStats(
+            name = "Kotlin",
+            solvedQuestion = 389,
+            percentage = 0.33
+        ),
+        DomainLanguageStats(
+            name = "Go",
+            solvedQuestion = 290,
+            percentage = 0.12
+        ),
+        DomainLanguageStats(
+            name = "Java",
+            solvedQuestion = 120,
+            percentage = 0.10
+        )
+    )
+    val previewLanguageStatsUiState = HomeScreen.LeetcodeLanguageStatsUiState(data = previewLanguageStats)
+    HomeScreenContent(
+        leetcodeProfileUiState = previewLeetcodeProfileUiState,
+        leetcodeContestHistoryUiState = previewLeetcodeContestHistoryUiState,
+        leetcodeContestDetailUiState = previewContestDetailUiState,
+        leetcodeFullProfileUiState = previewLeetcodeFullProfileUiState,
+        leetcodeLanguageStatsUiState = previewLanguageStatsUiState
     )
 }

@@ -6,10 +6,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class AcSubmissionNum(
-    @SerialName("count")
     val count: Int,
-    @SerialName("difficulty")
     val difficulty: String,
-    @SerialName("submissions")
     val submissions: Int
 )

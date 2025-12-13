@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class LanguageStats(
-    val data: DataX,
-    val errors: List<Error>?,
+    val data: DataX? = null,
+    val errors: List<Error>? = null,
     val matchedUser: MatchedUser
 )

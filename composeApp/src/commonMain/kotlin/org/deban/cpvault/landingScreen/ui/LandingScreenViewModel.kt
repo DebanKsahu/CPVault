@@ -2,6 +2,7 @@ package org.deban.cpvault.landingScreen.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import co.touchlab.kermit.Logger
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -44,28 +45,26 @@ class LandingScreenViewModel(
         }
     }
 
-    fun verifyLeetCodeUsername(username: String) {
-        viewModelScope.launch {
-            getLeetCodeUsernameUseCase.invoke(username = username)
-                .onStart {
+    suspend fun verifyLeetCodeUsername(username: String) {
+        getLeetCodeUsernameUseCase.invoke(username = username)
+            .onStart {
+                _uiState.update {
+                    LandingScreen.UiState(isLoading = true)
+                }
+            }.onEach { result ->
+                result.onSuccess {
                     _uiState.update {
-                        LandingScreen.UiState(isLoading = true)
+                        LandingScreen.UiState(isUsernameAvailable = true)
                     }
-                }.onEach { result ->
-                    result.onSuccess {
-                        _uiState.update {
-                            LandingScreen.UiState(isUsernameAvailable = true)
-                        }
-                    }.onFailure { error ->
-                        _uiState.update {
-                            LandingScreen.UiState(
-                                error = error.message.toString(),
-                                isUsernameAvailable = false
-                            )
-                        }
+                }.onFailure { error ->
+                    _uiState.update {
+                        LandingScreen.UiState(
+                            error = error.message.toString(),
+                            isUsernameAvailable = false
+                        )
                     }
-                }.collect()
-        }
+                }
+            }.collect()
     }
 }
 

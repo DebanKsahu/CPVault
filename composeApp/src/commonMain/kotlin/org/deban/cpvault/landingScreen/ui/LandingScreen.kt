@@ -46,7 +46,8 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun LandingScreen(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClick: (String) -> Unit
 ) {
     val viewModel = koinViewModel<LandingScreenViewModel>()
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
@@ -57,10 +58,10 @@ fun LandingScreen(
         uiState = uiState.value,
         username = username,
         onUsernameChange = {newUsername ->
-            Logger.w("Debug Msg") {"Username is changing new one is $newUsername"}
             username.value = newUsername
             viewModel.updateLeetCodeUsername(username = username.value)
-        }
+        },
+        onClick = onClick
     )
 
 
@@ -71,7 +72,8 @@ fun LandingScreenContent(
     modifier: Modifier = Modifier,
     uiState: LandingScreen.UiState,
     username: MutableState<String>,
-    onUsernameChange: (String) -> Unit
+    onUsernameChange: (String) -> Unit,
+    onClick: (String) -> Unit
 ) {
 
     var targetButtonColor by remember { mutableStateOf(Color.Red) }
@@ -139,9 +141,7 @@ fun LandingScreenContent(
                     .width(120.dp)
                     .height(45.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = animatedButtonColor),
-                onClick = {
-                    targetButtonColor = Color.Cyan
-                },
+                onClick = { onClick(username.value) },
                 content = {
                     Text(text = "Submit")
                 },
@@ -200,6 +200,7 @@ fun PreviewLandingScreen() {
         modifier = Modifier,
         uiState = LandingScreen.UiState(),
         username = username,
-        onUsernameChange = {}
+        onUsernameChange = {},
+        onClick = {}
     )
 }

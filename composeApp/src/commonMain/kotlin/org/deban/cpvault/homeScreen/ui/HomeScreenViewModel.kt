@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.supervisorScope
 import org.deban.cpvault.core.network.model.leetcode.LeetCodeUserContestDetail
 import org.deban.cpvault.core.network.model.leetcode.LeetCodeUserFullProfile
 import org.deban.cpvault.core.network.model.leetcode.LeetCodeUserProfile
@@ -27,7 +28,8 @@ class HomeScreenViewModel(
     private val getLeetcodeContestHistoryUseCase: GetLeetcodeContestHistoryUseCase,
     private val getLeetcodeContestDetailUseCase: GetLeetcodeContestDetailUseCase,
     private val getLeetcodeFullProfileUseCase: GetLeetcodeFullProfileUseCase,
-    private val getLeetcodeUserLanguageStatsUseCase: GetLeetcodeUserLanguageStatsUseCase
+    private val getLeetcodeUserLanguageStatsUseCase: GetLeetcodeUserLanguageStatsUseCase,
+    private val username: String
 ): ViewModel() {
 
     private val _leetcodeProfileUiState = MutableStateFlow(HomeScreen.LeetcodeProfileUiState())
@@ -48,16 +50,25 @@ class HomeScreenViewModel(
     private val _leetcodeUsername = MutableStateFlow("")
 
     init {
+        this.setLeetcodeUsername(username = this.username)
         viewModelScope.launch {
             _leetcodeUsername
                 .filter { username -> username.isNotBlank() }
                 .collectLatest { username ->
-                    getLeetcodeProfileDetail(username = username)
-                    getLeetcodeContestHistory(username = username)
-                    getLeetcodeContestDetail(username = username)
-                    getLeetcodeFullProfile(username = username)
-                    getLeetcodeLanguageStats(username = username)
+                    supervisorScope {
+                        launch { getLeetcodeProfileDetail(username = username) }
+                        launch { getLeetcodeContestHistory(username = username) }
+                        launch { getLeetcodeContestDetail(username = username) }
+                        launch { getLeetcodeFullProfile(username = username) }
+                        launch { getLeetcodeLanguageStats(username = username) }
+                    }
                 }
+        }
+    }
+
+    fun setLeetcodeUsername(username: String) {
+        this._leetcodeUsername.update { it ->
+            username
         }
     }
 

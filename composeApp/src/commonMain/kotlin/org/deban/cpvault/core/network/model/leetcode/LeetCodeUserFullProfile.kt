@@ -14,7 +14,6 @@ data class LeetCodeUserFullProfile(
     val ranking: Int,
     val recentSubmissions: List<RecentSubmission>,
     val reputation: Int,
-    val submissionCalendar: SubmissionCalendar? = null,
     val totalEasy: Int,
     val totalHard: Int,
     val totalMedium: Int,
