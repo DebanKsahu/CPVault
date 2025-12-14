@@ -46,6 +46,8 @@ kotlin {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
             implementation(libs.ktor.client.android)
+            implementation(libs.androidx.core.splashscreen)
+            implementation("com.google.android.material:material:1.11.0")
         }
         commonMain.dependencies {
             implementation(compose.runtime)
